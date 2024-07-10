@@ -1,0 +1,25 @@
+{
+  "name": "microservicio2",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.14.10",
+    "install": "^0.13.0",
+    "npm": "^10.8.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3"
+  }
+}

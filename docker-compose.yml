@@ -1,0 +1,47 @@
+
+services:
+  traefik:
+    image: traefik:v2.5
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./traefik/traefik.yml:/traefik.yml"
+    networks:
+      - web
+
+  service1:
+    build: ./microservicio1
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.service1.rule=Host(`localhost`) && PathPrefix(`/api/v1/service1`)"
+      - "traefik.http.services.service1.loadbalancer.server.port=3001"
+    networks:
+      - web
+
+  service2:
+    build: ./microservicio2
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.service2.rule=Host(`localhost`) && PathPrefix(`/api/v1/service2`)"
+      - "traefik.http.services.service2.loadbalancer.server.port=3002"
+    networks:
+      - web
+
+  combined-service:
+    image: traefik/whoami
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.combined-service.rule=Host(`localhost`) && PathPrefix(`/api/v1/services`)"
+      - "traefik.http.services.combined-service.loadbalancer.server.port=80"
+    networks:
+      - web
+
+networks:
+  web:
+    external: true

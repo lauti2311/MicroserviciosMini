@@ -1,0 +1,52 @@
+api:
+  dashboard: true
+  insecure: true  # Habilitar el acceso sin autenticación
+
+
+entryPoints:
+  web:
+    address: ":80"
+
+http:
+  routers:
+    router-service1:
+      rule: "Host(`localhost`) && PathPrefix(`/api/v1/service1`)"
+      service: service1
+
+    router-service2:
+      rule: "Host(`localhost`) && PathPrefix(`/api/v1/service2`)"
+      service: service2
+
+    router-combined-service:
+      rule: "Host(`localhost`) && PathPrefix(`/api/v1/services`)"
+      middlewares:
+        - strip-prefix
+      service: combined-service
+
+  services:
+    service1:
+      loadBalancer:
+        servers:
+          - url: "http://service1:3001"
+
+    service2:
+      loadBalancer:
+        servers:
+          - url: "http://service2:3002"
+
+    combined-service:
+      loadBalancer:
+        servers:
+          - url: "http://service1:3001"
+          - url: "http://service2:3002"
+
+middlewares:
+  strip-prefix:
+    stripPrefix:
+      prefixes:
+        - "/api/v1/services"
+
+providers:
+  docker:
+    exposedByDefault: false
+    watch: true
